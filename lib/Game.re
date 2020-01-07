@@ -24,6 +24,29 @@ type score =
 | Advantage(player)
 | Game(player);
 
-let startScore : score = Points({playerOne: Love, playerTwo: Love});
-let anotherScore : score = Forty({player: PlayerTwo, otherPlayerPoint:Thirty });
+let scoreWhenDeuce: player => score = winner => Advantage(winner);
 
+let scoreWhenAdvantage: (player, player) => score = (advantagedPlayer, winner) => advantagedPlayer == winner ? Game(winner) : Deuce;
+/* This time we infer that the function type is (player) => player */
+let other = player =>
+  switch player {
+  | PlayerOne => PlayerTwo
+  | PlayerTwo => PlayerOne
+  };
+
+let incrementPoint: point => option(point) = point =>
+  switch point {
+  | Love => Some(Fifteen)
+  | Fifteen => Some(Thirty)
+  | Thirty => None
+  };
+
+let scoreWhenForty = (current, winner) => 
+if (current.player === winner) { 
+  Game(winner) ;
+} else {
+  switch (incrementPoint(current.otherPlayerPoint)) {
+  | None => Deuce
+  | Some(a) => Forty({player: current.player, otherPlayerPoint: a});
+  };
+};
